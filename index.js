@@ -43,7 +43,7 @@ app.post('/login', async (req, res) => {
 
   if (result) {
     if(bcrypt.compareSync(req.body.password, result.password) == true) {
-      res.send("Welcome back" + result.name)
+      res.send("Welcome back " + result.name)
     } else {
       res.send("wrong password")
     }
@@ -78,36 +78,36 @@ async function run() {
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    let result = await client.db('testing').collection('test 2').insertOne(
-      {
-        subject: 'BERR 2233',
-        description: 'Computer Organizations and Architecture',
-        code: 'BERR 2233',
-        credit: 2
-      }
-    )
-    console.log(result)
+    // let result = await client.db('testing').collection('test 2').insertOne(
+    //   {
+    //     subject: 'BERR 2233',
+    //     description: 'Computer Organizations and Architecture',
+    //     code: 'BERR 2233',
+    //     credit: 2
+    //   }
+    // )
+    // console.log(result)
 
-    let subjects = await client.db('testing').collection('test 2').find().toArray()
-    console.log(subjects)
+    // let subjects = await client.db('testing').collection('test 2').find().toArray()
+    // console.log(subjects)
 
-    let updated = await client.db('testing').collection('test 2').updateOne(
-      {code: 'BERR 2233'},
-      {
-        $set: {
-          lecturer:'Dr. Fayeez',
-          semester: 4
-        }
-      }
-    )
-    console.log(updated)
+    // let updated = await client.db('testing').collection('test 2').updateOne(
+    //   {code: 'BERR 2233'},
+    //   {
+    //     $set: {
+    //       lecturer:'Dr. Fayeez',
+    //       semester: 4
+    //     }
+    //   }
+    // )
+    // console.log(updated)
 
-    let deleted = await client.db('testing').collection('test 2').deleteOne(
-      {
-        _id: new ObjectId('660b649a83d6eae8a2aea014')
-      }
-    )
-    console.log(deleted)
+    // let deleted = await client.db('testing').collection('test 2').deleteOne(
+    //   {
+    //     _id: new ObjectId('660b649a83d6eae8a2aea014')
+    //   }
+    // )
+    // console.log(deleted)
 
   } finally {
     // Ensures that the client will close when you finish/error
