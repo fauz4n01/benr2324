@@ -2,8 +2,32 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000;
 const bcrypt = require('bcrypt');
+var jwt = require('jsonwebtoken');
 
 app.use(express.json())
+
+app.get('/user:id', async (req, res) => {
+  // let auth = req.headers.authorization
+  // console.log(auth)
+
+  // let authSplitted = auth.split(' ')
+  // console.log(authSplitted)
+
+  // let token = authSplitted[1]
+  // console.log(token)
+
+  // let decoded = jwt.verify(token, 'cannothack');
+  // console.log(decoded)
+
+  if (req.identify._id != req.params.id) {
+    res.status(401).send('Unauthorized Access')
+  } else {
+    let result = await client.db("testing").collection("test1").findOne({
+      _id: new ObjectId(req.params.id)
+    })
+    res.send(result)
+  }
+})
 
 //new user registration
 app.post('/user', async (req, res) => {
@@ -43,13 +67,15 @@ app.post('/login', async (req, res) => {
 
   if (result) {
     if(bcrypt.compareSync(req.body.password, result.password) == true) {
-      res.send("Welcome back " + result.name)
+      var token = jwt.sign({ _id: result._id, username: result.username, name: result.name }, 
+        'cannothack');
+      res.send(token)
     } else {
-      res.send("wrong password")
+      res.status(401).send("wrong password")
     }
 
   } else {
-    res.send("username is not found")
+    res.status(401).send("username is not found")
   }
 
 })
@@ -78,14 +104,32 @@ async function run() {
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    // let result = await client.db('testing').collection('test 2').insertOne(
+    // let result = await client.db('testing').collection('products').insertMany([
     //   {
-    //     subject: 'BERR 2233',
-    //     description: 'Computer Organizations and Architecture',
-    //     code: 'BERR 2233',
-    //     credit: 2
-    //   }
-    // )
+    //     "_id": new ObjectId("617320a2452b071ad5b6e13a"),
+    //     "name": "Apple MacBook Pro",
+    //     "category": "Laptops",
+    //     "brand": "Apple",
+    //     "price": 1999.99,
+    //     "in_stock": true
+    //    },
+    //    {
+    //     "_id": new ObjectId("617320a2452b071ad5b6e13b"),
+    //     "name": "Samsung Galaxy S21",
+    //     "category": "Smartphones",
+    //     "brand": "Samsung",
+    //     "price": 899.99,
+    //     "in_stock": true
+    //    },
+    //    {
+    //     "_id": new ObjectId("617320a2452b071ad5b6e13c"),
+    //     "name": "Sony Bravia 4K TV",
+    //     "category": "Televisions",
+    //     "brand": "Sony",
+    //     "price": 1499.99,
+    //     "in_stock": false
+    //    }
+    // ])
     // console.log(result)
 
     // let subjects = await client.db('testing').collection('test 2').find().toArray()
@@ -113,5 +157,22 @@ async function run() {
     // Ensures that the client will close when you finish/error
     //await client.close();
   }
+}
+
+function verifyToken(req, res, next) {
+  const authHeader = req.headers.authorization
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+  
+  jwt.verify(token, "cannothack", (err, decoded) => {
+    console.log(err)
+
+    if (err) return res.sendStatus(403)
+    
+    req.identify = decoded
+
+    next()
+  })
 }
 run().catch(console.dir);
