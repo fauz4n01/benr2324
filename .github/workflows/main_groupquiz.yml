@@ -59,4 +59,4 @@ jobs:
           app-name: 'GroupQuiz'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FD8182764EC3442CBFA6ACE54212B80C }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4E9ABD871621405DB0788BAD35E43521 }}
