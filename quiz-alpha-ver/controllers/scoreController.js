@@ -14,10 +14,10 @@ const saveScore = async (req, res) => {
 
 const getScores = async (req, res) => {
   const db = req.app.locals.db;
-  const { userId } = req.params;
+  const { username } = req.body;
 
   try {
-    const scores = await db.collection('scores').find({ userId: new ObjectId(userId) }).toArray();
+    const scores = await db.collection('scores').find({ username }).toArray();
     res.json(scores);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -26,11 +26,11 @@ const getScores = async (req, res) => {
 
 const updateScore = async (req, res) => {
   const db = req.app.locals.db;
-  const { id } = req.params;
+  const { username } = req.body;
   const update = req.body;
 
   try {
-    const result = await db.collection('scores').updateOne({ _id: new ObjectId(id) }, { $set: update });
+    const result = await db.collection('scores').updateOne({ username}, { $set: update });
     res.json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -39,19 +39,27 @@ const updateScore = async (req, res) => {
 
 const deleteScore = async (req, res) => {
   const db = req.app.locals.db;
-  const { id } = req.params;
+  const username = req.params.username;
 
   try {
-    const result = await db.collection('scores').deleteOne({ _id: new ObjectId(id) });
-    res.json(result);
+    const result = await db.collection('scores').deleteOne({ username });
+
+    if (result.deletedCount === 0) {
+      console.error('Score not found:', username);
+      return res.status(404).json({ error: 'Score not found' });
+    }
+
+    console.log('Score deleted successfully:', username);
+    res.status(200).json({ message: 'Score deleted successfully' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Delete Score Error:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the score' });
   }
 };
 
 const submitAnswers = async (req, res) => {
   const db = req.app.locals.db;
-  const { userId, answers } = req.body;
+  const { username, answers } = req.body;
 
   try {
     // Fetch all questions
@@ -70,7 +78,7 @@ const submitAnswers = async (req, res) => {
     }
 
     // Save score to the database
-    const result = await db.collection('scores').insertOne({ userId: new ObjectId(userId), score, date: new Date() });
+    const result = await db.collection('scores').insertOne({ username, score, date: new Date() });
 
     res.status(201).json({ message: 'Score submitted successfully', score });
   } catch (error) {

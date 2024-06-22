@@ -62,11 +62,11 @@ const loginUser = async (req, res) => {
 
 const getUser = async (req, res) => {
   const db = req.app.locals.db;
-  const { id } = req.params;
+  const { username } = req.body;
 
   try {
-    const user = await db.collection('users').findOne({ _id: new ObjectId(id) });
-    res.json(user);
+    const user = await db.collection('users').findOne({ username });
+    res.send(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -74,15 +74,15 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const db = req.app.locals.db;
-  const { id } = req.params;
+  const { username } = req.params;
   const update = req.body;
 
   try {
     if (update.password) {
       update.password = await bcrypt.hash(update.password, 10);
     }
-    const result = await db.collection('users').updateOne({ _id: new ObjectId(id) }, { $set: update });
-    res.json(result);
+    const result = await db.collection('users').updateOne({ username }, { $set: update });
+    res.status(201).send(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -90,15 +90,23 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const db = req.app.locals.db;
-  const { id } = req.params;
+  const username = req.params.username;
 
   try {
-    const result = await db.collection('users').deleteOne({ _id: new ObjectId(id) });
-    res.json(result);
+    // Delete the user from the database by username
+    const result = await db.collection('users').deleteOne({ username });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    console.log('User deleted successfully:', username);
+    res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Delete User Error:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the user' });
   }
-};
+}
 
 module.exports = { registerUser, loginUser, getUser, updateUser, deleteUser };
 

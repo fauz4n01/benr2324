@@ -15,21 +15,21 @@ const router = express.Router();
 // User routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.get('/user/:id', authenticateToken, getUser);
-router.put('/user/:id', authenticateToken, updateUser);
-router.delete('/user/:id', authenticateToken, deleteUser);
+router.get('/user/info', authenticateToken, getUser);
+router.patch('/user/update', authenticateToken, updateUser);
+router.delete('/user/:username', deleteUser);
 
 // Question routes
 router.get('/questions', authenticateToken, fetchQuestions);
 router.post('/questions', authenticateToken, createQuestion);
-router.put('/questions/:id', authenticateToken, updateQuestion);
-router.delete('/questions/:id', authenticateToken, deleteQuestion);
+router.patch('/questions/update', authenticateToken, updateQuestion);
+router.delete('/questions/:questionId', deleteQuestion);
 
 // Score routes
 router.post('/scores', authenticateToken, saveScore);
-router.get('/scores/:userId', authenticateToken, getScores);
-router.put('/scores/:id', authenticateToken, updateScore);
-router.delete('/scores/:id', authenticateToken, deleteScore);
+router.get('/scores/info', authenticateToken, getScores);
+router.patch('/scores/update', authenticateToken, updateScore);
+router.delete('/scores/:username', deleteScore);
 router.post('/submit', authenticateToken, submitAnswers);
 
 module.exports = router;
