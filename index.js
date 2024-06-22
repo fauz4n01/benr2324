@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // const uri = "mongodb+srv://fauzan:lmaolmao@fauzan.1ml0u5f.mongodb.net/?retryWrites=true&w=majority&appName=fauzan";
@@ -99,3 +100,6 @@
 // }
 
 // main().catch(console.error);
+=======
+
+>>>>>>> d5016fc35aa62647ff762f20018596a6c4ccae2e
