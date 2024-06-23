@@ -2,9 +2,9 @@
   "name": "benr2324",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "quizgame.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node quizgame.js"
   },
   "author": "",
   "license": "ISC",
