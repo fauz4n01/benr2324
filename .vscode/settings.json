@@ -4,5 +4,6 @@
     "appService.zipIgnorePattern": [
         "node_modules{,/**}",
         ".vscode{,/**}"
-    ]
+    ],
+    "azureAutomation.directory.basePath": "c:\\Users\\Fauzan"
 }
